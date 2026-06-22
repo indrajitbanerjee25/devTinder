@@ -1,0 +1,20 @@
+{
+  "name": "devtinderbe",
+  "version": "1.0.0",
+  "description": "tinder for devs",
+  "keywords": [
+    "node",
+    "javascript"
+  ],
+  "license": "ISC",
+  "author": "Indrajit Banerjee",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "nodemon": "^3.1.14"
+  }
+}

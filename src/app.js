@@ -11,8 +11,12 @@ app.post("/signup", async (req, res) => {
     password: "indrajit@123",
     age: 33,
   });
-  await user.save();
-  res.send("User Added Successfully !");
+  try {
+    await user.save();
+    res.send("User Added Successfully !");
+  } catch (err) {
+    res.status(400).send("Error Saving user");
+  }
 });
 
 connectDB()

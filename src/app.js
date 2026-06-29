@@ -2,16 +2,20 @@ const express = require("express");
 const app = express();
 const connectDB = require("./config/database");
 const User = require("./models/user");
+const { Timestamp } = require("mongodb");
 
 app.use(express.json());
 
+//signup api for signing the user
 app.post("/signup", async (req, res) => {
-  const user = new User(req.body);
+  const data = req.body;
+  const user = new User(data);
+
   try {
     await user.save();
-    res.send("User Added Successfully !!");
+    res.send("User added successfully");
   } catch (err) {
-    res.status(400).send("Error Saving user");
+    res.status(400).send("Error in saving the user:" + err.message);
   }
 });
 
@@ -28,7 +32,7 @@ app.get("/find", async (req, res) => {
     res.status(404).send("Something went wrong");
   }
 });
-
+// Feed API - get all the users form the database
 app.get("/feed", async (req, res) => {
   try {
     const users = await User.find({});
@@ -54,10 +58,14 @@ app.patch("/update", async (req, res) => {
     const userId = req.body._id;
     const data = req.body;
 
-    const updateUser = await User.findByIdAndUpdate({ _id: userId }, data);
-    res.send("User updated successfully");
+    const updateUser = await User.findByIdAndUpdate({ _id: userId }, data, {
+      returnDocument: "after",
+      runValidators: true,
+    });
+
+    res.send("User updated successfully!!!!");
   } catch (err) {
-    res.status(404).send("Something went wrong");
+    res.status(404).send("UPDATE FAILED:" + err.message);
   }
 });
 

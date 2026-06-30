@@ -9,22 +9,22 @@ const userSchema = new mongoose.Schema(
       required: true,
       minLength: 5,
       maxLength: 50,
-      // validate(value) {
-      //   if (!/^[A-Za-z]+$/.test(value)) {
-      //     throw new Error("Please enter Character only");
-      //   }
-      // },
+      validate(value) {
+        if (!/^[A-Za-z]+$/.test(value)) {
+          throw new Error("Please enter Character only");
+        }
+      },
     },
     lastName: {
       type: String,
       required: true,
       minLength: 5,
       maxLength: 100,
-      // validate(value) {
-      //   if (!/^[A-Za-z]+$/.test(value)) {
-      //     throw new Error("Please enter Character only");
-      //   }
-      // },
+      validate(value) {
+        if (!/^[A-Za-z]+$/.test(value)) {
+          throw new Error("Please enter Character only");
+        }
+      },
     },
     emailId: {
       type: String,

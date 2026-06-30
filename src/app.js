@@ -12,6 +12,9 @@ app.post("/signup", async (req, res) => {
   const user = new User(data);
 
   try {
+    if (user?.skills.length > 3) {
+      throw new Error("Max 3 skills allowed");
+    }
     await user.save();
     res.send("User added successfully");
   } catch (err) {
@@ -53,12 +56,25 @@ app.delete("/deleteUser", async (req, res) => {
   }
 });
 
-app.patch("/update", async (req, res) => {
+app.patch("/update/:userId", async (req, res) => {
   try {
-    const userId = req.body._id;
-    const data = req.body;
+    // console.log(req.body);
+    // console.log(Object.keys(req.body));
 
-    const updateUser = await User.findByIdAndUpdate({ _id: userId }, data, {
+    const data = req.body;
+    const userId = req.params?.userId;
+    const UPDATE_ALLOWED = ["userID", "photourl", "skills", "age", "about"];
+    const isUpdateAllowed = Object.keys(data).every((k) =>
+      UPDATE_ALLOWED.includes(k),
+    );
+    if (data?.skills.length > 3) {
+      throw new Error("Max 3 skills allowed");
+    }
+    if (!isUpdateAllowed) {
+      throw new Error("Update not allowed");
+    }
+
+    const updateUser = await User.findByIdAndUpdate(userId, data, {
       returnDocument: "after",
       runValidators: true,
     });

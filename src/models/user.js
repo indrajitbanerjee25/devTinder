@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const validator = require("validator");
 
 //1st create Schema
 const userSchema = new mongoose.Schema(
@@ -8,22 +9,22 @@ const userSchema = new mongoose.Schema(
       required: true,
       minLength: 5,
       maxLength: 50,
-      validate(value) {
-        if (!/^[A-Za-z]+$/.test(value)) {
-          throw new Error("Please enter Character only");
-        }
-      },
+      // validate(value) {
+      //   if (!/^[A-Za-z]+$/.test(value)) {
+      //     throw new Error("Please enter Character only");
+      //   }
+      // },
     },
     lastName: {
       type: String,
       required: true,
       minLength: 5,
       maxLength: 100,
-      validate(value) {
-        if (!/^[A-Za-z]+$/.test(value)) {
-          throw new Error("Please enter Character only");
-        }
-      },
+      // validate(value) {
+      //   if (!/^[A-Za-z]+$/.test(value)) {
+      //     throw new Error("Please enter Character only");
+      //   }
+      // },
     },
     emailId: {
       type: String,
@@ -31,9 +32,8 @@ const userSchema = new mongoose.Schema(
       unique: true,
       trim: true,
       validate(value) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(value)) {
-          throw new Error("Please enter valid email");
+        if (!validator.isEmail(value)) {
+          throw Error("Invalid email address", +value);
         }
       },
     },
@@ -47,11 +47,23 @@ const userSchema = new mongoose.Schema(
         }
       },
     },
-    skills: { type: [String] },
+    skills: {
+      type: [String],
+      // validate(value) {
+      //   if (value.length > 3) {
+      //     throw new Error("Only 3 skills allowed");
+      //   }
+      // },
+    },
     photoUrl: {
       type: String,
       default:
         "https://toppng.com/show_download/239768/donna-picarro-dummy-avatar",
+      validate(value) {
+        if (!validator.isURL(value)) {
+          throw Error("Invalid Photo URL", +value);
+        }
+      },
     },
     about: { type: String, default: "This is default description of the user" },
   },

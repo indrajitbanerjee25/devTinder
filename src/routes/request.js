@@ -1,5 +1,8 @@
 const express = require("express");
-const requestRouter = express.app.delete("/deleteUser", async (req, res) => {
+const requestRouter = express.Router();
+const User = require("../models/user");
+
+requestRouter.delete("/deleteUser", async (req, res) => {
   try {
     const useId = req.body._id;
     const deleteUser = await User.findByIdAndDelete(useId);
@@ -9,7 +12,7 @@ const requestRouter = express.app.delete("/deleteUser", async (req, res) => {
   }
 });
 
-app.patch("/update/:userId", async (req, res) => {
+requestRouter.patch("/update/:userId", async (req, res) => {
   try {
     const data = req.body;
     const userId = req.params?.userId;
@@ -35,8 +38,9 @@ app.patch("/update/:userId", async (req, res) => {
   }
 });
 
-app.get("/find", async (req, res) => {
+requestRouter.get("/find", async (req, res) => {
   const userEmailId = req.body.emailId;
+
   try {
     const user = await User.find({ emailId: userEmailId });
     if (user.length === 0) {
@@ -48,3 +52,5 @@ app.get("/find", async (req, res) => {
     res.status(404).send("Something went wrong");
   }
 });
+
+module.exports = requestRouter;

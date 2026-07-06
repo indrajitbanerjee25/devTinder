@@ -2,15 +2,16 @@ const express = require("express");
 const app = express();
 const connectDB = require("./config/database");
 const cookieParser = require("cookie-parser");
-
 const auth = require("./routes/auth");
 const profile = require("./routes/profile");
+const request = require("./routes/request");
 
 app.use(express.json());
 app.use(cookieParser());
 
 app.use("/", auth);
 app.use("/", profile);
+app.use("/", request);
 
 connectDB()
   .then(() => {

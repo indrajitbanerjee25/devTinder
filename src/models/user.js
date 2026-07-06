@@ -11,33 +11,33 @@ const userSchema = new mongoose.Schema(
       required: true,
       minLength: 4,
       maxLength: 50,
-      // validate(value) {
-      //   if (!/^[A-Za-z]+$/.test(value)) {
-      //     throw new Error("Please enter Character only");
-      //   }
-      // },
+      validate(value) {
+        if (!/^[A-Za-z]+$/.test(value)) {
+          throw new Error("Please enter Character only");
+        }
+      },
     },
     lastName: {
       type: String,
       required: true,
       minLength: 5,
       maxLength: 50,
-      // validate(value) {
-      //   if (!/^[A-Za-z]+$/.test(value)) {
-      //     throw new Error("Please enter Character only");
-      //   }
-      // },
+      validate(value) {
+        if (!/^[A-Za-z]+$/.test(value)) {
+          throw new Error("Please enter Character only");
+        }
+      },
     },
     emailId: {
       type: String,
       lovercase: true,
       unique: true,
       trim: true,
-      // validate(value) {
-      //   if (!validator.isEmail(value)) {
-      //     throw Error("Invalid email address", +value);
-      //   }
-      // },
+      validate(value) {
+        if (!validator.isEmail(value)) {
+          throw Error("Invalid email address", +value);
+        }
+      },
     },
     password: { type: String },
     age: { type: Number, min: 18 },
@@ -51,11 +51,11 @@ const userSchema = new mongoose.Schema(
     },
     skills: {
       type: [String],
-      // validate(value) {
-      //   if (value.length > 3) {
-      //     throw new Error("Only 3 skills allowed");
-      //   }
-      // },
+      validate(value) {
+        if (value.length > 5) {
+          throw new Error("Only 3 skills allowed");
+        }
+      },
     },
     photoUrl: {
       type: String,

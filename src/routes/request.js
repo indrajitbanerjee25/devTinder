@@ -1,56 +1,60 @@
 const express = require("express");
 const requestRouter = express.Router();
 const User = require("../models/user");
+const { userAuth } = require("../middlewares/auth");
+const ConnectionRequest = require("../models/connectionRequest");
 
-requestRouter.delete("/deleteUser", async (req, res) => {
-  try {
-    const useId = req.body._id;
-    const deleteUser = await User.findByIdAndDelete(useId);
-    res.send("User Deleted successfully");
-  } catch (err) {
-    res.status(404).send("Something went wrong");
-  }
-});
+requestRouter.post(
+  "/request/send/:status/:toUserId",
+  userAuth,
+  async (req, res) => {
+    try {
+      const fromUserId = req.user._id;
+      const toUserId = req.params.toUserId;
+      const status = req.params.status;
 
-requestRouter.patch("/update/:userId", async (req, res) => {
-  try {
-    const data = req.body;
-    const userId = req.params?.userId;
-    const UPDATE_ALLOWED = ["userID", "photourl", "skills", "age", "about"];
-    const isUpdateAllowed = Object.keys(data).every((k) =>
-      UPDATE_ALLOWED.includes(k),
-    );
-    if (data?.skills.length > 3) {
-      throw new Error("Max 3 skills allowed");
+      const allowedStatusType = ["ignored", "interested"];
+
+      if (!allowedStatusType.includes(status)) {
+        return res
+          .status(400)
+          .json({ message: "Invalid status type " + status });
+      }
+
+      const existingConnectionRequest = await ConnectionRequest.findOne({
+        $or: [
+          { fromUserId, toUserId },
+          { fromUserId: toUserId, toUserId: fromUserId },
+        ],
+      });
+
+      const toUser = await User.findById(toUserId);
+      if (!toUser) {
+        return res.status(400).json({ message: "User not found!" });
+      }
+
+      if (existingConnectionRequest) {
+        return res
+          .status(400)
+          .send({ message: "Connection Request Already Exists." });
+      }
+
+      const connectionRequest = new ConnectionRequest({
+        fromUserId,
+        toUserId,
+        status,
+      });
+
+      const data = await connectionRequest.save();
+
+      res.json({
+        message: req.user.firstName + status + toUser.firstName + "Request",
+        data,
+      });
+    } catch (err) {
+      res.status(400).send("ERROR:" + err.message);
     }
-    if (!isUpdateAllowed) {
-      throw new Error("Update not allowed");
-    }
-
-    const updateUser = await User.findByIdAndUpdate(userId, data, {
-      returnDocument: "after",
-      runValidators: true,
-    });
-
-    res.send("User updated successfully!!!!");
-  } catch (err) {
-    res.status(404).send("UPDATE FAILED:" + err.message);
-  }
-});
-
-requestRouter.get("/find", async (req, res) => {
-  const userEmailId = req.body.emailId;
-
-  try {
-    const user = await User.find({ emailId: userEmailId });
-    if (user.length === 0) {
-      res.status(404).send("User not found");
-    } else {
-      res.send(user);
-    }
-  } catch (err) {
-    res.status(404).send("Something went wrong");
-  }
-});
+  },
+);
 
 module.exports = requestRouter;

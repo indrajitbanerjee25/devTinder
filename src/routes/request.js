@@ -80,17 +80,16 @@ requestRouter.post(
         toUserId: loggedInUser._id,
         status: "interested",
       });
-      console.log(connectionRequest);
 
       if (!connectionRequest) {
         return res
           .status(400)
           .json({ message: "Connection request not found" });
       }
-      const connectionStatus = status;
+      connectionRequest.status = status;
       const data = await connectionRequest.save();
 
-      res.send({ message: "Connection requested" + status, data });
+      res.send({ message: "Connection requested  " + status, data });
     } catch (err) {
       res.status(400).send("ERROR:" + err.message);
     }

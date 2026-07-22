@@ -5,7 +5,10 @@ const userAuth = async (req, res, next) => {
   try {
     const { token } = req.cookies;
     if (!token) {
-      throw new Error("Token is Invalid!!!");
+      return res.status(401).json({
+        success: false,
+        message: "Please log in to access this resource.",
+      });
     }
     const decodedValue = await jwt.verify(token, "IndraProject@369");
     const { _id } = decodedValue;
